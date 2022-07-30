@@ -26,41 +26,69 @@ const renderizarCard = (arr) => {
 }
 renderizarCard(produtos)
 
-//FAZENDO O FILTRO POR CATEGORIA
-const filtrarHorti  = () => {
-    tagUl.innerHTML = ""
-    const filtro = produtos.filter((produto) => produto.secao === 'Hortifruti')
-    renderizarCard(filtro)
+function filtrarTodos(secao){
+    const produtosFiltrados = produtos.filter(product => product.secao === secao)
+    somarProdutos(produtosFiltrados)
+    return renderizarCard(produtosFiltrados)
 }
-//FAZENDO O BOTÃO FUNCIONAR JUNTO A FUNÇÃO DE FILTRAR
-const btnHortiFruti = document.getElementsByClassName("estiloGeralBotoes estiloGeralBotoes--filter")[1]
+
+function filtrarHorti(){
+    tagUl.innerHTML = "";
+    filtrarTodos('Hortifruti')
+}
+const btnHortiFruti = document.getElementsByClassName("hortifruti")[0]
 btnHortiFruti.addEventListener("click", filtrarHorti)
 
-//FAZENDO O FILTRO POR CATEGORIA
-const filtrarPanificadora = () => {
-    tagUl.innerHTML = ""
-    const filtrar = produtos.filter((produto) => produto.secao === "Panificadora")
-    renderizarCard(filtrar)
+function filtrarPanificadora(){
+    tagUl.innerHTML = "";
+    filtrarTodos('Panificadora')
 }
-//FAZENDO O BOTÃO FUNCIONAR JUNTO A FUNÇÃO DE FILTRAR
-const btnPanificadora = document.getElementsByClassName("estiloGeralBotoes estiloGeralBotoes--filter")[2]
+const btnPanificadora = document.getElementsByClassName("panificadora")[0]
 btnPanificadora.addEventListener("click", filtrarPanificadora)
 
-//FAZENDO O BOTÃO FUNCIONAR JUNTO A FUNÇÃO DE FILTRAR
-const filtrarLaticinios = () => {
-    tagUl.innerHTML = ""
-    const filtrar = produtos.filter((produto) => produto.secao === "Laticínio")
-    renderizarCard(filtrar)
+function filtrarLaticinios(){
+    tagUl.innerHTML = "";
+    filtrarTodos('Laticínio')
 }
-//FAZENDO O BOTÃO FUNCIONAR JUNTO A FUNÇÃO DE FILTRAR
-const btnLaticinios = document.getElementsByClassName("estiloGeralBotoes estiloGeralBotoes--filter")[3]
+const btnLaticinios = document.getElementsByClassName("laticinios")[0]
 btnLaticinios.addEventListener("click", filtrarLaticinios)
 
-//BOTÃO QUE MOSTRA TODOS OS PRODUTOS FUNCIONANDO 
-const mostrarTodosProdutos = () => {
-    tagUl.innerHTML = ""
+function todosProdutos(){
+    tagUl.innerHTML = "";
     renderizarCard(produtos)
+    somarProdutos(produtos)
 }
+const btnTodosProdutos = document.getElementsByClassName("todos")[0]
+btnTodosProdutos.addEventListener("click", todosProdutos)
 
-const btnTodosProdutos = document.getElementsByClassName("estiloGeralBotoes estiloGeralBotoes--filter")[0]
-btnTodosProdutos.addEventListener("click", mostrarTodosProdutos)
+function somarProdutos(produtos){
+    const precoProdutos = document.getElementsByClassName("precoDinamico")[0]
+    const valor = produtos.reduce((acumulador, currentValue) => acumulador + currentValue.preco,0)
+
+    precoProdutos.innerText = `R$${valor.toFixed(2).toString().replace(".", ",")}`
+}
+somarProdutos(produtos)
+
+let barraPesquisa = document.querySelector(".campoBuscaPorNome")
+let botaoPesquisa = document.querySelector(".containerBuscaPorNome button")
+
+botaoPesquisa.addEventListener("click", function(){
+    let valorPesquisa = barraPesquisa.value.toLowerCase().trim()
+    let btnResultado = barraBuscar(valorPesquisa)
+    somarProdutos(btnResultado)
+    renderizarCard(btnResultado)
+})
+
+function barraBuscar(pesquisa){
+    let resultadoPesquisa = []
+    tagUl.innerHTML = "";
+    
+    for(let i = 0; i < produtos.length; i++){
+        
+        let nomesProdutos = produtos[i].nome.toLowerCase().trim()
+        if(nomesProdutos.includes(pesquisa)){
+            resultadoPesquisa.push(produtos[i])
+        }
+    }
+    return resultadoPesquisa
+}
